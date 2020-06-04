@@ -1,0 +1,26 @@
+1) Explain your design choices about the modified service. In the explanation, specify how you
+manage the concurrency problems that could arise when multiple clients are trying the new add
+operation together with other operations.
+
+due to synchronized keyword i prevent that when copy any bookshelf has operations
+on copy/delete/insert of items, in that way i ensure that the copy is done atomically.
+in addition each Bookshelf is protected throw a concurrenthashmap, so
+in that way only the involved bookshelf cannot be modified/deleted (this is a good
+result because the number of request slowed down are the minimum required to require
+atomicity to the operations)
+
+2. Explain how uncaught exceptions could cause information leakage and if/how you avoided it in
+your project
+
+is always a good idea to hyde information for security reason, a uncaught exception
+can provide sensible information as for example: the line where the exception is appeard
+the name of the class, the name of the package and in some very dangerous situations
+about data in ram. Another possible attack is known as oracle, it is based on the concept
+that if exceptions are too fine it can reveal sensible informations
+(eg: in pubblic criptografy if for example on a signed piece of data
+for verify the identity of an user there is an attack that use this oracle principle).
+to avoid this kind of problems is always a good idea to wrap all the code
+exposed to the requests in a try with more catch, where in the catch's there are
+all the exceptions in the design (so the webservice can tell to the user of the service
+why the request has failed) and last a generic catch for exception that say a general
+server error without communicate more detailed informations on the code
