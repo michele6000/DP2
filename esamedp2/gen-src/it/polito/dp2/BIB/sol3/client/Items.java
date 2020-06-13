@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="totalPages" type="{http://www.w3.org/2001/XMLSchema}positiveInteger"/>
- *         &lt;element name="page" type="{http://www.w3.org/2001/XMLSchema}positiveInteger"/>
+ *         &lt;element name="totalPages" type="{http://www.w3.org/2001/XMLSchema}positiveInteger" minOccurs="0"/>
+ *         &lt;element name="page" type="{http://www.w3.org/2001/XMLSchema}positiveInteger" minOccurs="0"/>
  *         &lt;element name="next" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="0"/>
  *         &lt;element name="item" maxOccurs="unbounded" minOccurs="0">
  *           &lt;complexType>
@@ -62,10 +62,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "items")
 public class Items {
 
-    @XmlElement(required = true)
     @XmlSchemaType(name = "positiveInteger")
     protected BigInteger totalPages;
-    @XmlElement(required = true)
     @XmlSchemaType(name = "positiveInteger")
     protected BigInteger page;
     @XmlSchemaType(name = "anyURI")

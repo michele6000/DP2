@@ -1,214 +1,202 @@
 package it.polito.dp2.BIB.sol3.client;
 
-import it.polito.dp2.BIB.ass3.DestroyedBookshelfException;
-import it.polito.dp2.BIB.ass3.ItemReader;
-import it.polito.dp2.BIB.ass3.ServiceException;
-import it.polito.dp2.BIB.ass3.TooManyItemsException;
-import it.polito.dp2.BIB.ass3.UnknownItemException;
-import it.polito.dp2.BIB.sol3.client.Ownerships.Ownership;
-import java.math.BigInteger;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import javax.ws.rs.client.ClientBuilder;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-public class BookshelfImpl
-  extends it.polito.dp2.BIB.sol3.client.Bookshelf
-  implements it.polito.dp2.BIB.ass3.Bookshelf {
-  javax.ws.rs.client.Client client;
-  protected WebTarget target;
-  static String uri = "http://localhost:8080/BiblioSystem/rest";
-  static String urlProperty = "it.polito.dp2.BIB.ass3.URL";
-  static String portProperty = "it.polito.dp2.BIB.ass3.PORT";
-  ObjectFactoryImpl of;
-  protected String id;
-  private String role;
+import it.polito.dp2.BIB.ass3.DestroyedBookshelfException;
+import it.polito.dp2.BIB.ass3.ItemReader;
+import it.polito.dp2.BIB.ass3.ServiceException;
+import it.polito.dp2.BIB.ass3.TooManyItemsException;
+import it.polito.dp2.BIB.ass3.UnknownItemException;
 
-  public BookshelfImpl(Bookshelves.Bookshelf b) {
-    super();
-    this.name = b.getName();
-    this.readCounter = b.getReadCounter();
+public class BookshelfImpl implements it.polito.dp2.BIB.ass3.Bookshelf {
 
-    if (b.getOwnerships() != null) {
-      this.ownerships = b.getOwnerships();
-    }
 
-    if (b.getSelf() != null) {
-      this.self = b.getSelf();
-    }
+	@Override
+	public void addItem(ItemReader item)
+			throws DestroyedBookshelfException, UnknownItemException, TooManyItemsException, ServiceException {
 
-    if (b.getTargets() != null) {
-      this.targets = b.getTargets();
-    }
+		if (!(item instanceof ItemReaderImpl))
+			throw new UnknownItemException();
 
-    client = ClientBuilder.newClient();
-    target = client.target(uri).path("biblio");
-    this.of = new ObjectFactoryImpl();
+		Integer itemID = ((ItemReaderImpl) item).getId();
 
-    this.id = Paths.get(this.getSelf()).getFileName().toString();
-  }
+		Response r = myWebTarget
+				.path("bookshelves")
+				.path(bookshelfID)
+				.path("items")
+				.request(MediaType.APPLICATION_JSON)
+				.post(Entity.entity(itemID, MediaType.TEXT_PLAIN));
 
-  public BookshelfImpl(String name) {
-    super();
-    this.name = name;
-    this.readCounter = BigInteger.ZERO;
+		if (r.getStatus() != 201) {
+			switch (r.getStatus()) {
+			case 409:
+				throw new ServiceException();
+			case 404:
+				throw new ServiceException();
+			case 403:
+				throw new TooManyItemsException();
+			case 400:
+				throw new DestroyedBookshelfException();
+			default:
+				throw new ServiceException();
+			}
+		}
 
-    client = ClientBuilder.newClient();
-    target = client.target(uri).path("biblio");
-    this.of = new ObjectFactoryImpl();
-  }
+		it.polito.dp2.BIB.sol3.client.Items.Item i = r.readEntity(it.polito.dp2.BIB.sol3.client.Items.Item.class);
+		listOfItems.add(new ItemReaderImpl(i));
+	}
+	
+	public BookshelfImpl(it.polito.dp2.BIB.sol3.client.Bookshelf b, WebTarget target) {
+		this.bookshelfName = b.getName();
+		
+		this.self = b.getSelf();
+		String[] strings = this.self.split("/");
+		this.bookshelfID = strings[strings.length-1];
+		this.listOfItems = new HashSet<>();
+		this.readedTimes = b.getNumberOfReads().intValue();
+		this.myWebTarget = target;
+	}
+	
 
-  @Override
-  public void addItem(ItemReader item)
-    throws DestroyedBookshelfException, UnknownItemException, TooManyItemsException, ServiceException {
-    String itemId = ((ItemReaderImpl) item).getId();
-    String itemPath = ((ItemReaderImpl) item).getSelf();
+	public BookshelfImpl(it.polito.dp2.BIB.sol3.client.Bookshelves.Bookshelf b, WebTarget target) {
+		this.bookshelfName = b.getName();
+		this.self = b.getSelf();
+		String[] strins = this.self.split("/");
+		this.readedTimes = b.getNumberOfReads().intValue();
+		this.bookshelfID = strins[strins.length - 1];
+		this.myWebTarget = target;
+		this.listOfItems = new HashSet<>();
+	}
 
-    String bookshelfId = Paths.get(this.getSelf()).getFileName().toString();
-    String bookshelfPath = this.getSelf();
+	@Override
+	public Set<ItemReader> getItems() throws DestroyedBookshelfException, ServiceException {
 
-    Ownership o = this.of.createOwnership(itemPath, bookshelfPath);
+		Set<ItemReader> itemSet = new HashSet<>();
+		Response r = myWebTarget.path("bookshelves")
+				.path(bookshelfID)
+				.path("items")
+				.request(MediaType.APPLICATION_JSON)
+				.get();
 
-    String path = "/bookshelves/" + bookshelfId + "/ownerships/" + itemId;
+		if (r.getStatus() != 200) {
+			if (r.getStatus() != 400)
+				throw new ServiceException();
+			else
+				throw new DestroyedBookshelfException();
+		}
 
-    Response r2 = target
-      .path(path)
-      .request(MediaType.APPLICATION_JSON_TYPE)
-      .header("role", this.role)
-      .put(Entity.entity(o, MediaType.APPLICATION_JSON_TYPE));
+		Items items = (it.polito.dp2.BIB.sol3.client.Items) r.readEntity(it.polito.dp2.BIB.sol3.client.Items.class);
 
-    int status = r2.getStatus();
+		for (it.polito.dp2.BIB.sol3.client.Items.Item i : items.getItem())
+			itemSet.add(new ItemReaderImpl(i));
 
-    if (status == 404) {
-      throw new DestroyedBookshelfException();
-    }
+		return itemSet;
+	}
 
-    if (status == 409) {
-      throw new TooManyItemsException();
-    }
+	@Override
+	public String getName() throws DestroyedBookshelfException {
 
-    if (status != 200) {
-      throw new ServiceException();
-    }
-  }
+		Response r = myWebTarget.path("bookshelves").path(bookshelfID).request(MediaType.APPLICATION_JSON).get();
 
-  @Override
-  public void removeItem(ItemReader item)
-    throws DestroyedBookshelfException, UnknownItemException, ServiceException {
-    String itemId = ((ItemReaderImpl) item).getId().toString();
-    String bookshelfId = Paths.get(this.getSelf()).getFileName().toString();
+		if (r.getStatus() != 200)
+			throw new DestroyedBookshelfException(
+					"Error in remote operation: " + r.getStatus() + " " + r.getStatusInfo());
 
-    String path = "/bookshelves/" + bookshelfId + "/ownerships/" + itemId;
+		return this.bookshelfName;
+	}
 
-    Response r2 = target
-      .path(path)
-      .request(MediaType.APPLICATION_JSON_TYPE)
-      .header("role", this.role)
-      .delete();
+	@Override
+	public int getNumberOfReads() throws DestroyedBookshelfException, ServiceException {
+		Response r = myWebTarget
+				.path("bookshelves")
+				.path(bookshelfID)
+				.path("numberOfReads")
+				.request(MediaType.TEXT_PLAIN)
+				.get();
 
-    int status = r2.getStatus();
+		if (r.getStatus() != 200) {
+			if (r.getStatus() != 404)
+				throw new ServiceException();
+			else
+				throw new DestroyedBookshelfException();
+		}
 
-    if (status == 404) {
-      throw new DestroyedBookshelfException();
-    }
+		String reads_s = r.readEntity(String.class);
+		int reads = 0;
 
-    if (status == 409) {
-      throw new UnknownItemException();
-    }
+		try {
+			reads = Integer.parseInt(reads_s);
+		} catch (NumberFormatException e) {
+			throw new ServiceException();
+		}
 
-    if (status != 204) {
-      throw new ServiceException();
-    }
-  }
+		return reads;
+	}
 
-  @Override
-  public Set<ItemReader> getItems()
-    throws DestroyedBookshelfException, ServiceException {
-    String path = "/bookshelves/" + this.id + "/ownerships/targets";
+	@Override
+	public void removeItem(ItemReader item) throws DestroyedBookshelfException, UnknownItemException, ServiceException {
+		String tid = ((ItemReaderImpl) item).getId().toString();
 
-    Response r = target
-      .path(path)
-      .request(MediaType.APPLICATION_JSON_TYPE)
-      .header("role", this.role)
-      .get();
+		Response r = myWebTarget
+				.path("bookshelves")
+				.path(bookshelfID)
+				.path("items")
+				.path(tid)
+				.request()
+				.delete();
 
-    int status = r.getStatus();
+		if (r.getStatus() == 204) {
 
-    if (status == 404) {
-      throw new DestroyedBookshelfException();
-    }
+			listOfItems.remove(item);
+		} else {
 
-    if (status != 200) {
-      throw new ServiceException();
-    }
+			switch (r.getStatus()) {
+			case 404:
+				throw new UnknownItemException();
+			case 400:
+				throw new DestroyedBookshelfException();
+			default:
+				throw new ServiceException();
+			}
+		}
 
-    Items items = r.readEntity(Items.class);
-    Set<ItemReader> itemSet = new HashSet<>();
+	}
 
-    for (it.polito.dp2.BIB.sol3.client.Items.Item i : items.getItem()) {
-      itemSet.add(new ItemReaderImpl(i));
-    }
+	@Override
+	public void destroyBookshelf() throws DestroyedBookshelfException, ServiceException {
 
-    return itemSet;
-  }
+		Response r = myWebTarget
+				.path("bookshelves")
+				.path(bookshelfID)
+				.request()
+				.delete();
 
-  @Override
-  public void destroyBookshelf()
-    throws DestroyedBookshelfException, ServiceException {
-    String path = "/bookshelves/" + this.id;
+		if (r.getStatus() != 204) {
+			if (r.getStatus() != 404)
+				throw new ServiceException();
+			else
+				throw new DestroyedBookshelfException();
+		}
+	}
+	
+	public String getSelf(){
+		return self;
+	}
 
-    Response r = target
-      .path(path)
-      .request(MediaType.APPLICATION_JSON_TYPE)
-      .header("role", this.role)
-      .delete();
+	
 
-    int status = r.getStatus();
 
-    if (status == 404) {
-      throw new DestroyedBookshelfException();
-    }
-
-    if (status != 204) {
-      throw new ServiceException();
-    }
-  }
-
-  @Override
-  public int getNumberOfReads()
-    throws DestroyedBookshelfException, ServiceException {
-    String path = "/bookshelves/" + this.id;
-
-    Response r = target
-      .path(path)
-      .request(MediaType.APPLICATION_JSON_TYPE)
-      .header("role", this.role)
-      .get();
-
-    int status = r.getStatus();
-
-    if (status == 404) {
-      throw new DestroyedBookshelfException();
-    }
-
-    if (status != 200) {
-      throw new ServiceException();
-    }
-
-    BookshelfImpl b = new BookshelfImpl(
-      r.readEntity(Bookshelves.Bookshelf.class)
-    );
-
-    this.setName(b.getName());
-    this.setOwnerships(b.getOwnerships());
-    this.setReadCounter(b.getReadCounter());
-    this.setSelf(b.getSelf());
-    this.setTargets(b.getTargets());
-
-    return this.getReadCounter().intValue();
-  }
+	String bookshelfID;
+	private String bookshelfName;
+	private int readedTimes;
+	private String self;
+	private Set<ItemReader> listOfItems;
+	private WebTarget myWebTarget;
 }

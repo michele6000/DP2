@@ -27,17 +27,15 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                   &lt;element name="readCounter" type="{http://www.w3.org/2001/XMLSchema}integer"/>
- *                   &lt;element name="ownerships" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="0"/>
- *                   &lt;element name="targets" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="0"/>
  *                   &lt;element name="self" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="0"/>
+ *                   &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *                   &lt;element name="numberOfReads" type="{http://www.w3.org/2001/XMLSchema}integer"/>
+ *                   &lt;element name="items" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="0"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
  *             &lt;/complexContent>
  *           &lt;/complexType>
  *         &lt;/element>
- *         &lt;element name="self" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -48,16 +46,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "bookshelf",
-    "self"
+    "bookshelf"
 })
 @XmlRootElement(name = "bookshelves")
 public class Bookshelves {
 
     @XmlElement(nillable = true)
     protected List<Bookshelves.Bookshelf> bookshelf;
-    @XmlSchemaType(name = "anyURI")
-    protected String self;
 
     /**
      * Gets the value of the bookshelf property.
@@ -88,30 +83,6 @@ public class Bookshelves {
         return this.bookshelf;
     }
 
-    /**
-     * Gets the value of the self property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSelf() {
-        return self;
-    }
-
-    /**
-     * Sets the value of the self property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSelf(String value) {
-        this.self = value;
-    }
-
 
     /**
      * <p>Java class for anonymous complex type.
@@ -123,11 +94,10 @@ public class Bookshelves {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *         &lt;element name="readCounter" type="{http://www.w3.org/2001/XMLSchema}integer"/>
-     *         &lt;element name="ownerships" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="0"/>
-     *         &lt;element name="targets" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="0"/>
      *         &lt;element name="self" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="0"/>
+     *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
+     *         &lt;element name="numberOfReads" type="{http://www.w3.org/2001/XMLSchema}integer"/>
+     *         &lt;element name="items" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="0"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -138,24 +108,45 @@ public class Bookshelves {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
+        "self",
         "name",
-        "readCounter",
-        "ownerships",
-        "targets",
-        "self"
+        "numberOfReads",
+        "items"
     })
     public static class Bookshelf {
 
+        @XmlSchemaType(name = "anyURI")
+        protected String self;
         @XmlElement(required = true)
         protected String name;
         @XmlElement(required = true)
-        protected BigInteger readCounter;
+        protected BigInteger numberOfReads;
         @XmlSchemaType(name = "anyURI")
-        protected String ownerships;
-        @XmlSchemaType(name = "anyURI")
-        protected String targets;
-        @XmlSchemaType(name = "anyURI")
-        protected String self;
+        protected String items;
+
+        /**
+         * Gets the value of the self property.
+         * 
+         * @return
+         *     possible object is
+         *     {@link String }
+         *     
+         */
+        public String getSelf() {
+            return self;
+        }
+
+        /**
+         * Sets the value of the self property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link String }
+         *     
+         */
+        public void setSelf(String value) {
+            this.self = value;
+        }
 
         /**
          * Gets the value of the name property.
@@ -182,99 +173,51 @@ public class Bookshelves {
         }
 
         /**
-         * Gets the value of the readCounter property.
+         * Gets the value of the numberOfReads property.
          * 
          * @return
          *     possible object is
          *     {@link BigInteger }
          *     
          */
-        public BigInteger getReadCounter() {
-            return readCounter;
+        public BigInteger getNumberOfReads() {
+            return numberOfReads;
         }
 
         /**
-         * Sets the value of the readCounter property.
+         * Sets the value of the numberOfReads property.
          * 
          * @param value
          *     allowed object is
          *     {@link BigInteger }
          *     
          */
-        public void setReadCounter(BigInteger value) {
-            this.readCounter = value;
+        public void setNumberOfReads(BigInteger value) {
+            this.numberOfReads = value;
         }
 
         /**
-         * Gets the value of the ownerships property.
+         * Gets the value of the items property.
          * 
          * @return
          *     possible object is
          *     {@link String }
          *     
          */
-        public String getOwnerships() {
-            return ownerships;
+        public String getItems() {
+            return items;
         }
 
         /**
-         * Sets the value of the ownerships property.
+         * Sets the value of the items property.
          * 
          * @param value
          *     allowed object is
          *     {@link String }
          *     
          */
-        public void setOwnerships(String value) {
-            this.ownerships = value;
-        }
-
-        /**
-         * Gets the value of the targets property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public String getTargets() {
-            return targets;
-        }
-
-        /**
-         * Sets the value of the targets property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setTargets(String value) {
-            this.targets = value;
-        }
-
-        /**
-         * Gets the value of the self property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public String getSelf() {
-            return self;
-        }
-
-        /**
-         * Sets the value of the self property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setSelf(String value) {
-            this.self = value;
+        public void setItems(String value) {
+            this.items = value;
         }
 
     }
