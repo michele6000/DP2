@@ -2,24 +2,26 @@ package it.polito.dp2.BIB.sol3.service;
 
 public class ConflictServiceException extends Exception {
 
-	public ConflictServiceException() {
-	}
+  public ConflictServiceException() {}
 
-	public ConflictServiceException(String message) {
-		super(message);
-	}
+  public ConflictServiceException(String message) {
+    super(message);
+  }
 
-	public ConflictServiceException(Throwable cause) {
-		super(cause);
-	}
+  public ConflictServiceException(Throwable cause) {
+    super(cause);
+  }
 
-	public ConflictServiceException(String message, Throwable cause) {
-		super(message, cause);
-	}
+  public ConflictServiceException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-	public ConflictServiceException(String message, Throwable cause, boolean enableSuppression,
-			boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
+  public ConflictServiceException(
+    String message,
+    Throwable cause,
+    boolean enableSuppression,
+    boolean writableStackTrace
+  ) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }

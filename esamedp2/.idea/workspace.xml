@@ -1,6 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c5c692d2-ab5f-4320-a0c1-e1d1b10bfe2d" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/client/BookshelfImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/client/BookshelfImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/client/ClientFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/client/ClientFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/client/ClientFactoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/client/ClientFactoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/client/ItemReaderImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/client/ItemReaderImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/BadRequestInOperationException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/BadRequestInOperationException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/BookshelfExt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/BookshelfExt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/BookshelvesDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/BookshelvesDB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/ConflictInOperationException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/ConflictInOperationException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/DB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/DB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/ItemComparator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/ItemComparator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/ItemPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/db/ItemPage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/model/EBiblio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/model/EBiblio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/resources/BiblioResources.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/resources/BiblioResources.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/resources/BookshelfResources.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/resources/BookshelfResources.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/resources/JsonValidationInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/resources/JsonValidationInterceptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/resources/MyErrorHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/resources/MyErrorHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/resources/XmlValidationProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/resources/XmlValidationProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/service/BadRequestServiceException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/service/BadRequestServiceException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/service/BiblioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/service/BiblioService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/service/ConflictServiceException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/service/ConflictServiceException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/service/SearchScope.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/service/SearchScope.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/service/util/ResourseUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/polito/dp2/BIB/sol3/service/util/ResourseUtils.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1dHT2efJcHCEqeLcMPMCuIa3soR" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c5c692d2-ab5f-4320-a0c1-e1d1b10bfe2d" name="Default Changelist" comment="" />
+      <created>1592080812384</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1592080812384</updated>
+      <workItem from="1592080814715" duration="27000" />
+      <workItem from="1592080864620" duration="228000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
   </component>
 </project>

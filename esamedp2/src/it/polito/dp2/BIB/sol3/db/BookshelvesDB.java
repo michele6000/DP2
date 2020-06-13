@@ -1,5 +1,7 @@
 package it.polito.dp2.BIB.sol3.db;
 
+import it.polito.dp2.BIB.ass3.TooManyItemsException;
+import it.polito.dp2.BIB.sol3.service.jaxb.Bookshelf;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,186 +11,184 @@ import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
-import it.polito.dp2.BIB.ass3.TooManyItemsException;
-import it.polito.dp2.BIB.sol3.service.jaxb.Bookshelf;
-
 public class BookshelvesDB {
 
-	public synchronized Integer getNumberOfReads(BigInteger b_id) throws Exception {
-		Integer integer = new Integer(-1);
-		BookshelfExt bookshelfExternal = null;
+  public synchronized Integer getNumberOfReads(BigInteger b_id)
+    throws Exception {
+    Integer integer = new Integer(-1);
+    BookshelfExt bookshelfExternal = null;
 
-		if ((bookshelfExternal=bookshelfExtById.get(b_id)) == null)
-			return null;
+    if ((bookshelfExternal = bookshelfExtById.get(b_id)) == null) return null;
 
-		Bookshelf b = bookshelfExternal.getBookshelf();
-		integer = b.getNumberOfReads().intValue();
-		
-		b.setNumberOfReads(BigInteger.valueOf(++integer));
+    Bookshelf b = bookshelfExternal.getBookshelf();
+    integer = b.getNumberOfReads().intValue();
 
-		return integer;
-	}
+    b.setNumberOfReads(BigInteger.valueOf(++integer));
 
-	public Bookshelf createBookshelf(BigInteger b_id, Bookshelf bookshelf) throws Exception {
-		BookshelfExt b_ext = new BookshelfExt(b_id, bookshelf);
+    return integer;
+  }
 
-		if (bookshelfExtById.putIfAbsent(b_id, b_ext) != null) {
-			return null;
-		} else
-			return bookshelf;
-	}
+  public Bookshelf createBookshelf(BigInteger b_id, Bookshelf bookshelf)
+    throws Exception {
+    BookshelfExt b_ext = new BookshelfExt(b_id, bookshelf);
 
-	public BookshelfExt deleteBookshelf(BigInteger bookshelfID) {
-		return bookshelfExtById.remove(bookshelfID);
-	}
+    if (bookshelfExtById.putIfAbsent(b_id, b_ext) != null) {
+      return null;
+    } else return bookshelf;
+  }
 
-	public synchronized Map<BigInteger, Bookshelf> getBookshelves(String prefix) throws Exception {
-		if (!(prefix != null))
-			prefix = "";
-		
-		Map<BigInteger, Bookshelf> mapByPrefix = new HashMap<BigInteger, Bookshelf>();
+  public BookshelfExt deleteBookshelf(BigInteger bookshelfID) {
+    return bookshelfExtById.remove(bookshelfID);
+  }
 
-		for (Map.Entry<BigInteger, BookshelfExt> entry : bookshelfExtById.entrySet()) {
-			Bookshelf b = entry.getValue().getBookshelf();
-			if (b.getName().startsWith(prefix))
-				mapByPrefix.put(entry.getKey(), b);
-		}
+  public synchronized Map<BigInteger, Bookshelf> getBookshelves(String prefix)
+    throws Exception {
+    if (!(prefix != null)) prefix = "";
 
-		if (mapByPrefix.size() != 0){
-			return mapByPrefix;
-		} else 
-			return new HashMap<BigInteger, Bookshelf>();
-	}
+    Map<BigInteger, Bookshelf> mapByPrefix = new HashMap<BigInteger, Bookshelf>();
 
-	public synchronized Bookshelf getBookshelf(BigInteger b_id) throws Exception {
-		BookshelfExt b_ext = bookshelfExtById.get(b_id);
-		if (!(b_ext != null))
-			return null;
+    for (Map.Entry<BigInteger, BookshelfExt> entry : bookshelfExtById.entrySet()) {
+      Bookshelf b = entry.getValue().getBookshelf();
+      if (b.getName().startsWith(prefix)) mapByPrefix.put(entry.getKey(), b);
+    }
 
-		Bookshelf b = b_ext.getBookshelf();
-		Integer old = b.getNumberOfReads().intValue();
-		b.setNumberOfReads(BigInteger.valueOf(++old));
+    if (mapByPrefix.size() != 0) {
+      return mapByPrefix;
+    } else return new HashMap<BigInteger, Bookshelf>();
+  }
 
-		return b;
-	}
-	
-	public Boolean addItemInListInBookshelf(BigInteger b_id, BigInteger tid)
-			throws ForbiddenException, ClientErrorException, Exception {
+  public synchronized Bookshelf getBookshelf(BigInteger b_id) throws Exception {
+    BookshelfExt b_ext = bookshelfExtById.get(b_id);
+    if (!(b_ext != null)) return null;
 
-		BookshelfExt b_ext = bookshelfExtById.computeIfPresent(b_id, (k, v) -> {
-			try {
-				v.addItemInListInBookshelf(tid);
-				return v;
-			} catch (ForbiddenException e) {
-				throw new ForbiddenException();
-			} catch (ClientErrorException e) {
-				throw new ClientErrorException(e.getResponse().getStatus());
-			}
-		});
-		if (b_ext == null)
-			return false;
-		return true;
-	}
-	
+    Bookshelf b = b_ext.getBookshelf();
+    Integer old = b.getNumberOfReads().intValue();
+    b.setNumberOfReads(BigInteger.valueOf(++old));
 
+    return b;
+  }
 
-	private BookshelvesDB() {
-		this.bookshelfExtById = new ConcurrentHashMap<BigInteger, BookshelfExt>();
-	}
+  public Boolean addItemInListInBookshelf(BigInteger b_id, BigInteger tid)
+    throws ForbiddenException, ClientErrorException, Exception {
+    BookshelfExt b_ext = bookshelfExtById.computeIfPresent(
+      b_id,
+      (k, v) -> {
+        try {
+          v.addItemInListInBookshelf(tid);
+          return v;
+        } catch (ForbiddenException e) {
+          throw new ForbiddenException();
+        } catch (ClientErrorException e) {
+          throw new ClientErrorException(e.getResponse().getStatus());
+        }
+      }
+    );
+    if (b_ext == null) return false;
+    return true;
+  }
 
-	public static synchronized BigInteger getNextId() throws Exception {
-		lastId+=1;
-		BigInteger id = BigInteger.valueOf(lastId-1);
-		return id;
-	}
+  private BookshelvesDB() {
+    this.bookshelfExtById = new ConcurrentHashMap<BigInteger, BookshelfExt>();
+  }
 
-	public Map<BigInteger, BookshelfExt> getSharedMap() {
-		return this.bookshelfExtById;
-	}
+  public static synchronized BigInteger getNextId() throws Exception {
+    lastId += 1;
+    BigInteger id = BigInteger.valueOf(lastId - 1);
+    return id;
+  }
 
-	public synchronized boolean getItemInListInBookshelf(BigInteger b_id, BigInteger tid) throws Exception {
-		BookshelfExt b_ext = bookshelfExtById.get(b_id);
+  public Map<BigInteger, BookshelfExt> getSharedMap() {
+    return this.bookshelfExtById;
+  }
 
-		Bookshelf b = b_ext.getBookshelf();
-		Integer old = b.getNumberOfReads().intValue();
-		old++;
-		b.setNumberOfReads(BigInteger.valueOf(old));
+  public synchronized boolean getItemInListInBookshelf(
+    BigInteger b_id,
+    BigInteger tid
+  )
+    throws Exception {
+    BookshelfExt b_ext = bookshelfExtById.get(b_id);
 
-		return b_ext.getItemInListInBookshelf(tid);
-	}
+    Bookshelf b = b_ext.getBookshelf();
+    Integer old = b.getNumberOfReads().intValue();
+    old++;
+    b.setNumberOfReads(BigInteger.valueOf(old));
 
-	public Boolean removeItemInListInBookshelf(BigInteger b_id, BigInteger tid) throws NotFoundException {
-		BookshelfExt b_ext = bookshelfExtById.computeIfPresent(b_id, (k, v) -> {
-			try {
-				v.removeItemInListInBookshelf(tid);
-				return v;
-			} catch (NotFoundException e) {
-				throw new NotFoundException();
-			}
-		});
-		if (b_ext != null)
-			return true;
-		return false;
-	}
+    return b_ext.getItemInListInBookshelf(tid);
+  }
 
-	public synchronized Set<BigInteger> getItemListOfBookshelf(BigInteger b_id) {
-		BookshelfExt b_ext = null;
-		
-		try {
-			b_ext = bookshelfExtById.get(b_id);
+  public Boolean removeItemInListInBookshelf(BigInteger b_id, BigInteger tid)
+    throws NotFoundException {
+    BookshelfExt b_ext = bookshelfExtById.computeIfPresent(
+      b_id,
+      (k, v) -> {
+        try {
+          v.removeItemInListInBookshelf(tid);
+          return v;
+        } catch (NotFoundException e) {
+          throw new NotFoundException();
+        }
+      }
+    );
+    if (b_ext != null) return true;
+    return false;
+  }
 
-			Bookshelf b = b_ext.getBookshelf();
-			Integer old = b.getNumberOfReads().intValue();
-			old++;
-			b.setNumberOfReads(BigInteger.valueOf(old));
+  public synchronized Set<BigInteger> getItemListOfBookshelf(BigInteger b_id) {
+    BookshelfExt b_ext = null;
 
-			return b_ext.getItemListOfBookshelf();
-			
-		} catch (Exception e){
-			throw new NotFoundException();
-		}
+    try {
+      b_ext = bookshelfExtById.get(b_id);
 
-	}
+      Bookshelf b = b_ext.getBookshelf();
+      Integer old = b.getNumberOfReads().intValue();
+      old++;
+      b.setNumberOfReads(BigInteger.valueOf(old));
 
-	
+      return b_ext.getItemListOfBookshelf();
+    } catch (Exception e) {
+      throw new NotFoundException();
+    }
+  }
 
-	private static Integer lastId = 0;
-	private ConcurrentHashMap<BigInteger, BookshelfExt> bookshelfExtById;
+  private static Integer lastId = 0;
+  private ConcurrentHashMap<BigInteger, BookshelfExt> bookshelfExtById;
 
-	private static BookshelvesDB bookshelvesDB = new BookshelvesDB();
+  private static BookshelvesDB bookshelvesDB = new BookshelvesDB();
 
-	public static BookshelvesDB getBookshelvesDB() {
-		return bookshelvesDB;
-	}
+  public static BookshelvesDB getBookshelvesDB() {
+    return bookshelvesDB;
+  }
 
-	// to lock the inserts of items
-	public synchronized void addAllItem(String from, String to) throws ForbiddenException,NotFoundException {
-		
-		BigInteger fromID = new BigInteger(from);
-		BigInteger toID = new BigInteger(to);
-		
-		Set<BigInteger> idsItems = getItemListOfBookshelf(fromID);
-		
-		// to lock the resource
-		boolean success = null!=bookshelfExtById.computeIfPresent(toID, (k, v) -> {
-			try {
-				
-				if (v.getItemListOfBookshelf().size()+idsItems.size()>20)
-					throw new ClientErrorException(403);
-				
-				for (BigInteger id : idsItems)
-					v.addItemInListInBookshelf(id);
-				return v;
-			} catch (ForbiddenException e) {
-				throw new ForbiddenException();
-			} catch (ClientErrorException e) {
-				e.printStackTrace();
-				throw new ForbiddenException();
-			}
-		});
-		
-		if (!success)
-			throw new NotFoundException();
-	}
+  // to lock the inserts of items
+  public synchronized void addAllItem(String from, String to)
+    throws ForbiddenException, NotFoundException {
+    BigInteger fromID = new BigInteger(from);
+    BigInteger toID = new BigInteger(to);
 
+    Set<BigInteger> idsItems = getItemListOfBookshelf(fromID);
+
+    // to lock the resource
+    boolean success =
+      null !=
+      bookshelfExtById.computeIfPresent(
+        toID,
+        (k, v) -> {
+          try {
+            if (
+              v.getItemListOfBookshelf().size() + idsItems.size() > 20
+            ) throw new ClientErrorException(403);
+
+            for (BigInteger id : idsItems) v.addItemInListInBookshelf(id);
+            return v;
+          } catch (ForbiddenException e) {
+            throw new ForbiddenException();
+          } catch (ClientErrorException e) {
+            e.printStackTrace();
+            throw new ForbiddenException();
+          }
+        }
+      );
+
+    if (!success) throw new NotFoundException();
+  }
 }
