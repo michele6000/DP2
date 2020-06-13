@@ -1,75 +1,85 @@
 package it.polito.dp2.BIB.sol3.client;
 
+import it.polito.dp2.BIB.sol3.client.Items.Item;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import it.polito.dp2.BIB.ass3.ItemReader;
-import it.polito.dp2.BIB.sol3.client.Items.Item;
-
 public class ItemReaderImpl implements it.polito.dp2.BIB.ass3.ItemReader {
+    private final Integer itemID;
+    private final String itemTitle;
+    private String itemSubtitle = null;
+    private final List<String> itemAuthors;
+    private Set<it.polito.dp2.BIB.ass3.ItemReader> citingOfItems;
 
-	private Integer id;
-	private String title;
-	private String subtitle = null;
-	private List<String> authors;
-	private Set<it.polito.dp2.BIB.ass3.ItemReader> citingItems;
-	
-	
-	public ItemReaderImpl(Item i) {
-		this.title = i.getTitle();
-		if (i.getSubtitle() != null)
-			this.subtitle = i.getSubtitle();
-		this.authors = new ArrayList<>();
-		if (i.getAuthor() != null) {
-			if (! i.getAuthor().isEmpty())
-				this.authors.addAll(i.getAuthor());
-		}
-		citingItems = new HashSet<>();
-	}
+    public ItemReaderImpl(Item i) {
+        this.itemAuthors = new ArrayList<>();
+        if (i.getAuthor() != null) {
+            if (!i.getAuthor().isEmpty())
+                this.itemAuthors.addAll(i.getAuthor());
+        }
+        citingOfItems = new HashSet<>();
+        this.itemTitle = i.getTitle();
+        this.itemID = Integer.parseInt(i.getSelf().split("/")[i.getSelf().split("/").length - 1]);
 
-	public Integer getId()  {
-		return id;
-	}
-	
-	@Override
-	public String[] getAuthors() {
-		String[] a = new String[authors.size()];
-		for (int i = 0; i < authors.size(); i++)
-			a[i] = authors.get(i);
-		return a;
-	}
+        if (i.getSubtitle() != null)
+            this.itemSubtitle = i.getSubtitle();
+    }
 
-	@Override
-	public Set<it.polito.dp2.BIB.ass3.ItemReader> getCitingItems() {
-		if (citingItems == null)
-			citingItems = new HashSet<>();
-		return citingItems;
-	}
+    @Override
+    public String[] getAuthors() {
+        String[] a = new String[itemAuthors.size()];
+        {
+            int i = 0;
+            for (String autor : itemAuthors) {
+                a[i] = autor;
+                i++;
+            }
+        }
+        return a;
+    }
 
-	@Override
-	public String getSubtitle() {
-		return subtitle;
-	}
+    @Override
+    public String toString() {
 
-	@Override
-	public String getTitle() {
-		return title;
-	}
+        StringBuilder ret = new StringBuilder("Item id=" + itemID + " Title=" + itemTitle);
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Item id="+id+" Title="+title);
-		if (subtitle != null)
-			sb.append(" Subtitle="+subtitle);
-		sb.append("\nAuthors="+authors);
-		sb.append("\nCiting Items=");
-		for (it.polito.dp2.BIB.ass3.ItemReader i : citingItems)  {
-			sb.append(i.getTitle()+" ");
-		}
-		return sb.toString();
-	}
+        if (itemSubtitle != null)
+            ret.append(" Subtitle=").append(itemSubtitle);
+
+        ret.append("\nAuthors=").append(itemAuthors);
+        ret.append("\nCiting Items=");
+
+
+        for (it.polito.dp2.BIB.ass3.ItemReader i : citingOfItems) {
+            ret.append(i.getTitle()).append(" ");
+        }
+
+        return ret.substring(0, ret.length() - 1);
+    }
+
+    @Override
+    public Set<it.polito.dp2.BIB.ass3.ItemReader> getCitingItems() {
+        if (citingOfItems == null)
+            citingOfItems = new HashSet<>();
+        return citingOfItems;
+    }
+
+    @Override
+    public String getSubtitle() {
+        return itemSubtitle;
+    }
+
+    @Override
+    public String getTitle() {
+        return itemTitle;
+    }
+
+    public Integer getId() {
+        return itemID;
+    }
+
+
 }
