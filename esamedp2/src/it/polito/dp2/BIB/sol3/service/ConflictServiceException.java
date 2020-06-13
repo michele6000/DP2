@@ -1,0 +1,31 @@
+package it.polito.dp2.BIB.sol3.service;
+
+public class ConflictServiceException extends Exception {
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
+
+  public ConflictServiceException() {}
+
+  public ConflictServiceException(String message) {
+    super(message);
+  }
+
+  public ConflictServiceException(Throwable cause) {
+    super(cause);
+  }
+
+  public ConflictServiceException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public ConflictServiceException(
+    String message,
+    Throwable cause,
+    boolean enableSuppression,
+    boolean writableStackTrace
+  ) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
+}
