@@ -81,16 +81,6 @@ public class JsonValidationInterceptor implements ReaderInterceptor {
     }
   }
 
-  @Override
-  public Object aroundReadFrom(ReaderInterceptorContext context)
-    throws IOException, WebApplicationException {
-    Object ret = context.proceed();
-    if (
-      context.getMediaType().equals(MediaType.APPLICATION_JSON_TYPE)
-    ) validate(ret);
-    return ret;
-  }
-
   public void validate(Object item) {
     logger.log(Level.INFO, "JSON validation called.");
     try {
@@ -100,17 +90,14 @@ public class JsonValidationInterceptor implements ReaderInterceptor {
       v.validate(source);
     } catch (SAXException e) {
       logger.log(Level.WARNING, "Request body validation error.", e);
-      StringBuilder validationErrorMessage = new StringBuilder(
-        "Request body validation error"
-      );
-      if (e.getMessage() != null) validationErrorMessage
-        .append(": ")
-        .append(e.getMessage());
+      String validationErrorMessage = "Request body validation error";
+      if (e.getMessage() != null) validationErrorMessage +=
+        ": " + e.getMessage();
       Throwable linked = e.getCause();
       while (linked != null) {
         if (
           linked instanceof SAXParseException && linked.getMessage() != null
-        ) validationErrorMessage.append(": ").append(linked.getMessage());
+        ) validationErrorMessage += ": " + linked.getMessage();
         linked = linked.getCause();
       }
       BadRequestException bre = new BadRequestException(
@@ -118,7 +105,7 @@ public class JsonValidationInterceptor implements ReaderInterceptor {
       );
       String responseBody = responseBodyTemplate.replaceFirst(
         "___TO_BE_REPLACED___",
-        validationErrorMessage.toString()
+        validationErrorMessage
       );
       Response response = Response
         .fromResponse(bre.getResponse())
@@ -129,5 +116,15 @@ public class JsonValidationInterceptor implements ReaderInterceptor {
     } catch (Exception e) {
       throw new InternalServerErrorException();
     }
+  }
+
+  @Override
+  public Object aroundReadFrom(ReaderInterceptorContext context)
+    throws IOException, WebApplicationException {
+    Object ret = context.proceed();
+    if (
+      context.getMediaType().equals(MediaType.APPLICATION_JSON_TYPE)
+    ) validate(ret);
+    return ret;
   }
 }

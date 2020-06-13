@@ -1,6 +1,10 @@
 package it.polito.dp2.BIB.sol3.db;
 
 public class ConflictInOperationException extends Exception {
+  /**
+   *
+   */
+  private static final long serialVersionUID = -4873551272256042781L;
 
   public ConflictInOperationException() {}
 

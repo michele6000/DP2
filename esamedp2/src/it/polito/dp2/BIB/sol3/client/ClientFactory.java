@@ -12,6 +12,7 @@ public class ClientFactory extends it.polito.dp2.BIB.ass3.ClientFactory {
     URI uri = null;
     try {
       String uriProp = System.getProperty("it.polito.dp2.BIB.ass3.URL");
+      System.out.println("property: " + uriProp);
       if (uriProp != null) {
         uri = new URI(uriProp);
       } else {
@@ -20,6 +21,7 @@ public class ClientFactory extends it.polito.dp2.BIB.ass3.ClientFactory {
     } catch (URISyntaxException e) {
       e.printStackTrace();
     }
-    return new ClientFactoryImpl(uri);
+    return new ClientFactoryImpl(uri, "user");
   }
 }
+

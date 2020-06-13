@@ -1,5 +1,7 @@
 package it.polito.dp2.BIB.sol3.resources;
 
+// This validator performs JAXB unmarshalling with validation
+// against the schema
 import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
 
 import java.io.BufferedReader;
@@ -25,16 +27,17 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-// This validator performs JAXB unmarshalling with validation
-// against the schema
-
 import org.xml.sax.SAXParseException;
 
 @Provider
 @Consumes({ "application/xml", "text/xml" })
 public class XmlValidationProvider<T> implements MessageBodyReader<T> {
   final String jaxbPackage = "it.polito.dp2.BIB.sol3.service.jaxb";
+
+  // the schema must be shared
   Schema schema;
+
+  // JAXBContext is thread-safe
   JAXBContext jc;
   Logger logger;
   String responseBodyTemplate;
@@ -82,6 +85,22 @@ public class XmlValidationProvider<T> implements MessageBodyReader<T> {
     }
   }
 
+  @Override
+  public boolean isReadable(
+    Class<?> type,
+    Type genericType,
+    Annotation[] annotations,
+    MediaType mediaType
+  ) {
+    return jaxbPackage.equals(type.getPackage().getName());
+  }
+
+  /*
+   * 2 nested try-catch:
+   * 1: failure in allocating the unmarshaler
+   * 2: error in unmarshaling object
+   */
+  @SuppressWarnings("unchecked")
   @Override
   public T readFrom(
     Class<T> type,
@@ -148,15 +167,5 @@ public class XmlValidationProvider<T> implements MessageBodyReader<T> {
       logger.log(Level.INFO, "Unable to initialize unmarshaller.", e);
       throw new InternalServerErrorException();
     }
-  }
-
-  @Override
-  public boolean isReadable(
-    Class<?> type,
-    Type genericType,
-    Annotation[] annotations,
-    MediaType mediaType
-  ) {
-    return jaxbPackage.equals(type.getPackage().getName());
   }
 }

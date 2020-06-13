@@ -9,12 +9,15 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType(
   name = "",
-  propOrder = { "items", "journals", "articles", "books", "self" }
+  propOrder = {
+    "items", "journals", "articles", "books", "bookshelves", "self",
+  }
 )
 @XmlRootElement(name = "biblio")
 public class EBiblio extends Biblio {
   private transient UriBuilder root;
   private transient UriBuilder items;
+  private transient UriBuilder bookshelves;
 
   public EBiblio() {
     super();
@@ -23,6 +26,7 @@ public class EBiblio extends Biblio {
   public EBiblio(UriBuilder root) {
     this.root = root;
     items = root.clone().path("items");
+    this.bookshelves = root.clone().path("bookshelves");
   }
 
   @Override
@@ -51,6 +55,13 @@ public class EBiblio extends Biblio {
   @XmlSchemaType(name = "anyURI")
   public String getBooks() {
     return items.clone().path("books").toTemplate();
+  }
+
+  @Override
+  @XmlElement(required = true)
+  @XmlSchemaType(name = "anyURI")
+  public String getBookshelves() {
+    return bookshelves.toTemplate();
   }
 
   @Override

@@ -1,6 +1,10 @@
 package it.polito.dp2.BIB.sol3.db;
 
 public class BadRequestInOperationException extends Exception {
+  /**
+   *
+   */
+  private static final long serialVersionUID = 2753371731266430333L;
 
   public BadRequestInOperationException() {}
 

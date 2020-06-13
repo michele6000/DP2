@@ -50,6 +50,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Ownerships }
+     * 
+     */
+    public Ownerships createOwnerships() {
+        return new Ownerships();
+    }
+
+    /**
      * Create an instance of {@link it.polito.dp2.BIB.sol3.client.Bookshelf }
      * 
      */
@@ -103,6 +111,22 @@ public class ObjectFactory {
      */
     public Items.Item createItemsItem() {
         return new Items.Item();
+    }
+
+    /**
+     * Create an instance of {@link it.polito.dp2.BIB.sol3.client.Ownership }
+     * 
+     */
+    public it.polito.dp2.BIB.sol3.client.Ownership createOwnership() {
+        return new it.polito.dp2.BIB.sol3.client.Ownership();
+    }
+
+    /**
+     * Create an instance of {@link Ownerships.Ownership }
+     * 
+     */
+    public Ownerships.Ownership createOwnershipsOwnership() {
+        return new Ownerships.Ownership();
     }
 
     /**

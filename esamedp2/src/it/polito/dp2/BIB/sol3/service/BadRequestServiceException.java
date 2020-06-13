@@ -1,6 +1,10 @@
 package it.polito.dp2.BIB.sol3.service;
 
 public class BadRequestServiceException extends Exception {
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
 
   public BadRequestServiceException() {}
 

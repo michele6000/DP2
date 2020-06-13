@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-
+	
 	<xsd:element name="biblio">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -8,17 +8,17 @@
 			    <xsd:element name="journals" type="xsd:anyURI"></xsd:element>
 			    <xsd:element name="articles" type="xsd:anyURI"></xsd:element>
 			    <xsd:element name="books" type="xsd:anyURI"></xsd:element>
-			    <xsd:element name="self" type="xsd:anyURI" minOccurs="0"/>
-			    <xsd:element name="bookshelves" type="xsd:anyURI"/>   
+			    <xsd:element name="bookshelves" type="xsd:anyURI"></xsd:element>
+			    <xsd:element name="self" type="xsd:anyURI" minOccurs="0"></xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="items">
 		<xsd:complexType>
 			<xsd:sequence>
-			    <xsd:element name="totalPages" type="xsd:positiveInteger" minOccurs = "0"></xsd:element>
-			    <xsd:element name="page" type="xsd:positiveInteger" minOccurs = "0"></xsd:element>
+			    <xsd:element name="totalPages" type="xsd:positiveInteger"></xsd:element>
+			    <xsd:element name="page" type="xsd:positiveInteger"></xsd:element>
 			    <xsd:element name="next" type="xsd:anyURI" minOccurs="0"></xsd:element>
 				<xsd:element ref="item" minOccurs="0" maxOccurs="20"/>
 			</xsd:sequence>
@@ -122,22 +122,42 @@
 	</xsd:element>
 	
 	<xsd:element name="bookshelves">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element ref="bookshelf" minOccurs="0" maxOccurs="unbounded"/>
-			</xsd:sequence>
-		</xsd:complexType>
+	   <xsd:complexType>
+	      <xsd:sequence>
+	         <xsd:element ref="bookshelf" minOccurs="0" maxOccurs="unbounded"/>
+	         <xsd:element name="self" type="xsd:anyURI" minOccurs="0"/>
+	      </xsd:sequence>
+	   </xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name = "bookshelf">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="self" type="xsd:anyURI" minOccurs = "0"/>
-				<xsd:element name="name" type="xsd:string" />
-				<xsd:element name = "numberOfReads" type = "xsd:integer"/>
-				<xsd:element name="items" type="xsd:anyURI" minOccurs = "0"/>
-			</xsd:sequence>
-		</xsd:complexType>
+	<xsd:element name="bookshelf">
+	   <xsd:complexType>
+	      <xsd:sequence>
+              <xsd:element name="name" type="xsd:string"/>
+              <xsd:element name="readCounter" type="xsd:integer"/>
+              <xsd:element name="ownerships" type="xsd:anyURI" minOccurs="0"/>
+              <xsd:element name="targets" type="xsd:anyURI" minOccurs="0"/>
+	          <xsd:element name="self" type="xsd:anyURI" minOccurs="0"/>
+	      </xsd:sequence>
+	   </xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="ownership">
+	    <xsd:complexType>
+	       <xsd:sequence>
+	          <xsd:element name="bookshelf" type="xsd:anyURI"/>
+	          <xsd:element name="item" type="xsd:anyURI"/>
+	          <xsd:element name="self" type="xsd:anyURI" minOccurs="0"/>
+	       </xsd:sequence>
+	    </xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="ownerships">
+	   <xsd:complexType>
+	      <xsd:sequence>
+              <xsd:element ref="ownership" minOccurs="0" maxOccurs="20"/>
+	      </xsd:sequence>
+	   </xsd:complexType>
 	</xsd:element>
 	
 	<!-- ISBN code is a 10 or 13 digit code. If it is 10 digits long the last digit may be a X -->  

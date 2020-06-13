@@ -3,6 +3,7 @@ package it.polito.dp2.BIB.sol3.service.util;
 import it.polito.dp2.BIB.sol3.service.jaxb.Bookshelf;
 import it.polito.dp2.BIB.sol3.service.jaxb.Citation;
 import it.polito.dp2.BIB.sol3.service.jaxb.Item;
+import it.polito.dp2.BIB.sol3.service.jaxb.Ownership;
 import java.math.BigInteger;
 import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
@@ -11,23 +12,11 @@ public class ResourseUtils {
   UriBuilder base;
   UriBuilder items;
   UriBuilder bookshelves;
-  UriBuilder item_list;
 
   public ResourseUtils(UriBuilder base) {
     this.base = base;
     this.items = base.clone().path("biblio/items");
     this.bookshelves = base.clone().path("biblio/bookshelves");
-    this.item_list = base.clone().path("biblio/bookshelves");
-  }
-
-  // custom
-  public void completeBookshelf(Bookshelf bookshelf, BigInteger id) {
-    UriBuilder selfBuilder = bookshelves.clone().path(id.toString());
-    URI self = selfBuilder.build();
-    bookshelf.setSelf(self.toString());
-
-    URI item_list = selfBuilder.clone().path("items").build();
-    bookshelf.setItems(item_list.toString());
   }
 
   public void completeItem(Item item, BigInteger id) {
@@ -57,6 +46,29 @@ public class ResourseUtils {
         .path(tid.toString())
         .build()
         .toString()
+    );
+  }
+
+  public void completeBookshelf(Bookshelf b, BigInteger id) {
+    UriBuilder ub = this.bookshelves.clone().path(id.toString());
+    URI self = ub.build();
+    b.setSelf(self.toString());
+    URI o = ub.clone().path("ownerships").build();
+    b.setOwnerships(o.toString());
+    URI t = ub.clone().path("ownerships/targets").build();
+    b.setTargets(t.toString());
+  }
+
+  public void completeOwnership(
+    Ownership ownership,
+    BigInteger bid,
+    BigInteger iid
+  ) {
+    UriBuilder ub = this.bookshelves.clone().path(bid.toString());
+    ownership.setBookshelf(ub.build().toString());
+    ownership.setItem(items.clone().path(iid.toString()).build().toString());
+    ownership.setSelf(
+      ub.clone().path("ownerships").path(iid.toString()).build().toString()
     );
   }
 }

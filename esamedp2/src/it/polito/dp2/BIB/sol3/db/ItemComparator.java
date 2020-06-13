@@ -8,8 +8,12 @@ import java.util.Comparator;
 
 public class ItemComparator implements Comparator<Item> {
 
-  private int getYearFromBook(BookType book) {
-    return book.getYear().toGregorianCalendar().get(Calendar.YEAR);
+  @Override
+  public int compare(Item i1, Item i2) {
+    int yeardiff = getYear(i1) - getYear(i2);
+    if (yeardiff != 0) return yeardiff; else return i1
+      .getSelf()
+      .compareTo(i2.getSelf());
   }
 
   private int getYear(Item i1) {
@@ -19,15 +23,11 @@ public class ItemComparator implements Comparator<Item> {
     );
   }
 
-  private int getYearFromArticle(ArticleType a) {
-    return a.getVolume().toGregorianCalendar().get(Calendar.YEAR);
+  private int getYearFromBook(BookType book) {
+    return book.getYear().toGregorianCalendar().get(Calendar.YEAR);
   }
 
-  @Override
-  public int compare(Item i1, Item i2) {
-    int yeardiff = getYear(i1) - getYear(i2);
-    if (yeardiff != 0) return yeardiff; else return i1
-      .getSelf()
-      .compareTo(i2.getSelf());
+  private int getYearFromArticle(ArticleType a) {
+    return a.getVolume().toGregorianCalendar().get(Calendar.YEAR);
   }
 }

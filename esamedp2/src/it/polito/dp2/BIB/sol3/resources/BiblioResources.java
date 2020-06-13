@@ -1,19 +1,37 @@
 package it.polito.dp2.BIB.sol3.resources;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import it.polito.dp2.BIB.sol3.model.EBiblio;
 import it.polito.dp2.BIB.sol3.service.BadRequestServiceException;
 import it.polito.dp2.BIB.sol3.service.BiblioService;
 import it.polito.dp2.BIB.sol3.service.ConflictServiceException;
 import it.polito.dp2.BIB.sol3.service.SearchScope;
-import it.polito.dp2.BIB.sol3.service.jaxb.Biblio;
-import it.polito.dp2.BIB.sol3.service.jaxb.Citation;
-import it.polito.dp2.BIB.sol3.service.jaxb.Item;
-import it.polito.dp2.BIB.sol3.service.jaxb.Items;
+import it.polito.dp2.BIB.sol3.service.jaxb.*;
 import java.math.BigInteger;
 import java.net.URI;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 @Path("/biblio")
 @Api(value = "/biblio")
@@ -43,10 +61,7 @@ public class BiblioResources {
   @Path("/items")
   @ApiOperation(value = "getItems", notes = "search items")
   @ApiResponses(
-    value = {
-      @ApiResponse(code = 200, message = "OK", response = Items.class),
-      @ApiResponse(code = 400, message = "Bad Request"),
-    }
+    value = { @ApiResponse(code = 200, message = "OK", response = Items.class) }
   )
   @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
   public Items getItems(
@@ -62,9 +77,7 @@ public class BiblioResources {
     @ApiParam("The page of results to be read") @QueryParam(
       "page"
     ) @DefaultValue("1") int page
-  )
-    throws Exception {
-    if (keyword == null) throw new BadRequestException("keyword is required");
+  ) {
     try {
       return service.getItems(
         SearchScope.ALL,
@@ -82,10 +95,7 @@ public class BiblioResources {
   @Path("/items/articles")
   @ApiOperation(value = "getArticles", notes = "search articles")
   @ApiResponses(
-    value = {
-      @ApiResponse(code = 200, message = "OK", response = Items.class),
-      @ApiResponse(code = 400, message = "Bad Request"),
-    }
+    value = { @ApiResponse(code = 200, message = "OK", response = Items.class) }
   )
   @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
   public Items getArticles(
@@ -101,8 +111,7 @@ public class BiblioResources {
     @ApiParam("The page of results to be read") @QueryParam(
       "page"
     ) @DefaultValue("1") int page
-  )
-    throws Exception {
+  ) {
     if (keyword == null) throw new BadRequestException("keyword is required");
     try {
       return service.getItems(
@@ -121,10 +130,7 @@ public class BiblioResources {
   @Path("/items/books")
   @ApiOperation(value = "getBooks", notes = "search books")
   @ApiResponses(
-    value = {
-      @ApiResponse(code = 200, message = "OK", response = Items.class),
-      @ApiResponse(code = 404, message = "Bad Request"),
-    }
+    value = { @ApiResponse(code = 200, message = "OK", response = Items.class) }
   )
   @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
   public Items getBooks(
@@ -140,8 +146,7 @@ public class BiblioResources {
     @ApiParam("The page of results to be read") @QueryParam(
       "page"
     ) @DefaultValue("1") int page
-  )
-    throws Exception {
+  ) {
     if (keyword == null) throw new BadRequestException("keyword is required");
     try {
       return service.getItems(
@@ -171,9 +176,7 @@ public class BiblioResources {
   )
   @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
   @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-  public Response createItem(Item item) throws Exception {
-    if (item == null) throw new BadRequestException();
-
+  public Response createItem(Item item) {
     try {
       Item returnItem = service.createItem(item);
       return Response
@@ -197,8 +200,7 @@ public class BiblioResources {
   @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
   public Item getItem(
     @ApiParam("The id of the item") @PathParam("id") BigInteger id
-  )
-    throws Exception {
+  ) {
     Item item;
     try {
       item = service.getItem(id);
@@ -224,10 +226,7 @@ public class BiblioResources {
   public Item updateItem(
     @ApiParam("The id of the item") @PathParam("id") BigInteger id,
     Item item
-  )
-    throws Exception {
-    if (item == null) throw new BadRequestException();
-
+  ) {
     Item updated;
     try {
       updated = service.updateItem(id, item);
@@ -245,25 +244,23 @@ public class BiblioResources {
     value = {
       @ApiResponse(code = 204, message = "No content"),
       @ApiResponse(code = 404, message = "Not Found"),
-      @ApiResponse(
-        code = 409,
-        message = "Conflict (The items  is cited by one or more  other items)"
-      ),
+      @ApiResponse(code = 409, message = "Conflict (item is cited)"),
     }
   )
   public void deleteItem(
     @ApiParam("The id of the item") @PathParam("id") BigInteger id
-  )
-    throws Exception {
+  ) {
     BigInteger ret;
     try {
       ret = service.deleteItem(id);
     } catch (ConflictServiceException e) {
       throw new ClientErrorException(409);
     } catch (Exception e) {
+      e.printStackTrace();
       throw new InternalServerErrorException();
     }
     if (ret == null) throw new NotFoundException();
+    return;
   }
 
   @GET
@@ -283,8 +280,7 @@ public class BiblioResources {
     @ApiParam(
       "The id of the item for which citing items have to be read"
     ) @PathParam("id") BigInteger id
-  )
-    throws Exception {
+  ) {
     Items items;
     try {
       items = service.getItemCitedBy(id);
@@ -312,8 +308,7 @@ public class BiblioResources {
     @ApiParam(
       "The id of the item from which citations are considered"
     ) @PathParam("id") BigInteger id
-  )
-    throws Exception {
+  ) {
     Items items;
     try {
       items = service.getItemCitations(id);
@@ -380,16 +375,18 @@ public class BiblioResources {
     Citation citation
   )
     throws Exception {
-    if (citation == null) throw new BadRequestException();
-
     UriBuilder builder = uriInfo.getAbsolutePathBuilder();
     System.out.println(uriInfo.getBaseUri());
     URI u = builder.build();
+
+    // we check that the from item exists
     UriBuilder fromBuilder = UriBuilder.fromUri(citation.getFrom());
     URI u2 = fromBuilder.path("citations").path(tid.toString()).build();
     if (!u.equals(u2)) throw new BadRequestException();
+
     citation.setSelf(u.toString());
     Citation newCitation;
+
     try {
       newCitation = service.createItemCitation(id, tid, citation);
     } catch (BadRequestServiceException e) {
@@ -399,7 +396,9 @@ public class BiblioResources {
     } catch (Exception e) {
       throw new InternalServerErrorException();
     }
+
     if (newCitation == null) throw new NotFoundException();
+
     return Response.created(u).entity(newCitation).build();
   }
 
@@ -419,8 +418,7 @@ public class BiblioResources {
     @ApiParam("The id of the cited item of this citation") @PathParam(
       "tid"
     ) BigInteger tid
-  )
-    throws Exception {
+  ) {
     boolean success;
     try {
       success = service.deleteItemCitation(id, tid);
@@ -428,5 +426,6 @@ public class BiblioResources {
       throw new InternalServerErrorException();
     }
     if (!success) throw new NotFoundException();
+    return;
   }
 }
